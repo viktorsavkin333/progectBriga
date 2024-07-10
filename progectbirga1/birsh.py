@@ -3,7 +3,7 @@ balance = {'алмазы': 10000,
            'железо': 0}
 
 alliron = 10000
-
+proveralliron = 0
 if alliron <= 50:
     priseiron = 1
 elif 500 >= alliron >= 51:
@@ -38,10 +38,10 @@ while balance['алмазы'] >= 0:
                     priseiron = 20
                 elif 50000 >= alliron >= 10001:
                     priseiron = 40
-                a += (1 * priseiron)
-            print(f'Количества железа за {kol} алмазов: {a}')
-            yesornoo = int(input('Согласны продолжитьть? (1/0)'))
-            if yesornoo == 1:
+                proveralliron += priseiron
+            if proveralliron > alliron:
+                print('В банке не хватает железа')
+            else:
                 for i in range(kol):
                     if alliron <= 50:
                         priseiron = 1
@@ -53,14 +53,26 @@ while balance['алмазы'] >= 0:
                         priseiron = 20
                     elif 50000 >= alliron >= 10001:
                         priseiron = 40
-                    balance['алмазы'] -= 1
-                    balance['железо'] += 1 * priseiron
-                    alliron -= 1
-            else:
-                continue
+                    a += (1 * priseiron)
+                print(f'Количества железа за {kol} алмазов: {a}')
+                yesornoo = int(input('Согласны продолжитьть? (1/0)'))
+                if yesornoo == 1:
+                    for i in range(kol):
+                        if alliron <= 50:
+                            priseiron = 1
+                        elif 500 >= alliron >= 51:
+                            priseiron = 5
+                        elif 2500 >= alliron >= 501:
+                            priseiron = 10
+                        elif 10000 >= alliron >= 2501:
+                            priseiron = 20
+                        elif 50000 >= alliron >= 10001:
+                            priseiron = 40
+                        balance['алмазы'] -= 1
+                        balance['железо'] += 1 * priseiron
+                        alliron -= priseiron
+                else:
+                    continue
             print(alliron)
         print(balance)
 
-# посмотреть ка опдключяеться SQLITE PYTHON ок?
-# школьные конференции, олимпиады по програмированию
-# flask
