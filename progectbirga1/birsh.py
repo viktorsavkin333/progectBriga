@@ -26,6 +26,7 @@ def login():
         main(False)
     else:
         registred = True
+        print("Вы успешно авторизованны")
         main(True)
 
 def reg():
@@ -37,11 +38,11 @@ def reg():
 
 def main(registred):
         if registred == False:
-            help = "Список команд: /help - Команды, /new_user - Регистрация, /login - Вход"
+            help = "Список команд: /leave - Выход, /new_user - Регистрация, /login - Вход"
             print(help)
             enter = input("Введите команду: ")
-            if enter == '/help':
-                print(help)
+            if enter == '/leave':
+                print()
             elif enter == '/new_user':
                 reg()
             elif enter == '/login':
@@ -50,11 +51,11 @@ def main(registred):
                 print('Неверная команда')
                 main(False)
         if registred == True:
-            help = "Список команд: /help - Команды, /user - Профиль, /birsh - Перейти на биржу"
+            help = "Список команд: /leave - Выход, /user - Профиль, /birsh - Перейти на биржу"
             print(help)
             enter = input("Введите команду: ")
-            if enter == '/help':
-                print(help)
+            if enter == '/leave':
+                print()
             elif enter == '/user':
                 user()
             elif enter == '/birsh':
@@ -75,7 +76,7 @@ def abc (user_login, user_password, diamond, airon):
             main(False)
 
 def user():
-    allselect = f"""SELECT * FROM users WHERE login={user_login}"""
+    allselect = f"""SELECT * FROM users WHERE login = '{user_login}' """
     sql.execute(allselect)
     records = sql.fetchall()
     print('Ваш логин: ', records[0][0])
