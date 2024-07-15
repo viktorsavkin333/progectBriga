@@ -91,7 +91,6 @@ def birsh():
     sql.execute(allironselected)
     alliron1 = sql.fetchall()
     alliron = alliron1[0][0]
-    print(allironselected)
     proveralliron = 0
     if alliron <= 50:
         priseiron = 1
