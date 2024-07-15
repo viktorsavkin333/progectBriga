@@ -21,21 +21,12 @@ def login():
     user_login = input("Введите логин: ")
     user_password = input("Введите пароль: ")
     sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
+    db.commit()
     if sql.fetchone() is None:
         print("Такого пользователя не существует")
         main(False)
     else:
         registred = True
-        sql_update_query = f"""UPDATE users set diamond = diamond+1 WHERE login = {user_login}"""
-        allselect = f"""SELECT * FROM users WHERE login={user_login}"""
-        sql.execute(allselect)
-        records = sql.fetchall()
-        print(records)
-        print(type(records))
-        print(records[0][-1])
-        sql.execute(sql_update_query)
-        db.commit()
-        print("Запись успешно обновлена")
         main(True)
 
 def reg():
@@ -58,7 +49,7 @@ def main(registred):
                 login()
             else:
                 print('Неверная команда')
-                main()
+                main(False)
         if registred == True:
             help = "Список команд: /help - Команды, /user - Профиль, /birsh - Перейти на биржу"
             print(help)
@@ -67,9 +58,11 @@ def main(registred):
                 print(help)
             elif enter == '/user':
                 user()
+            elif enter == '/birsh':
+                birsh()
             else:
                 print('Неверная команда')
-                main()
+                main(True)
 
 def abc (user_login, user_password, diamond, airon):
         sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
@@ -86,8 +79,122 @@ def user():
     allselect = f"""SELECT * FROM users WHERE login={user_login}"""
     sql.execute(allselect)
     records = sql.fetchall()
-    print(records)
-    print(type(records))
-    print(records[0][-1])
+    print('Ваш логин: ', records[0][0])
+    print('Ваше кол-во алмазов: ', records[0][2])
+    print('Ваше кол-во железа: ', records[0][3])
     main(True)
+
+
+
+def birsh():
+    a = 0
+    allironselected = """SELECT airon FROM users WHERE login= "bank" """
+    sql.execute(allironselected)
+    alliron1 = sql.fetchall()
+    alliron = alliron1[0][0]
+    print(allironselected)
+    proveralliron = 0
+    if alliron <= 50:
+        priseiron = 1
+    elif 500 >= alliron >= 51:
+        priseiron = 5
+    elif 2500 >= alliron >= 501:
+        priseiron = 10
+    elif 10000 >= alliron >= 2501:
+        priseiron = 20
+    elif 50000 >= alliron >= 10001:
+        priseiron = 40
+    num1 = int(input('Введите что вы хотите купить от 1 до 1 (0 для выхода): '))
+    if num1 == 1:
+        diamondselected = f"""SELECT diamond FROM users WHERE login={user_login}"""
+        sql.execute(diamondselected)
+        diamondi0 = sql.fetchall()
+        diamondi1 = diamondi0[0][0]
+        print('Вы выбрали железо')
+        print(f'Сейчас у вас {diamondi1} алмазов')
+        kol = int(input('Введите количество(в алмазах)'))
+        if kol > diamondi1:
+            print('У вас не хватает алмазов')
+            birsh()
+        else:
+            for i in range(kol):
+                allironselected = """SELECT airon FROM users WHERE login= "bank" """
+                sql.execute(allironselected)
+                alliron1 = sql.fetchall()
+                alliron = alliron1[0][0]
+                if alliron <= 50:
+                    priseiron = 1
+                elif 500 >= alliron >= 51:
+                    priseiron = 5
+                elif 2500 >= alliron >= 501:
+                    priseiron = 10
+                elif 10000 >= alliron >= 2501:
+                    priseiron = 20
+                elif 50000 >= alliron >= 10001:
+                    priseiron = 40
+                proveralliron += priseiron
+            if proveralliron > alliron:
+                print('В банке не хватает железа')
+                birsh()
+            else:
+                for i in range(kol):
+                    allironselected = """SELECT airon FROM users WHERE login= "bank" """
+                    sql.execute(allironselected)
+                    alliron1 = sql.fetchall()
+                    alliron = alliron1[0][0]
+                    if alliron <= 50:
+                        priseiron = 1
+                    elif 500 >= alliron >= 51:
+                        priseiron = 5
+                    elif 2500 >= alliron >= 501:
+                        priseiron = 10
+                    elif 10000 >= alliron >= 2501:
+                        priseiron = 20
+                    elif 50000 >= alliron >= 10001:
+                        priseiron = 40
+                    a += (1 * priseiron)
+                print(f'Количества железа за {kol} алмазов: {a}')
+                yesornoo = int(input('Согласны продолжитьть? (1/0)'))
+                if yesornoo == 1:
+                    for i in range(kol):
+                        allironselected = """SELECT airon FROM users WHERE login= "bank" """
+                        sql.execute(allironselected)
+                        alliron1 = sql.fetchall()
+                        alliron = alliron1[0][0]
+                        if alliron <= 50:
+                            priseiron = 1
+                        elif 500 >= alliron >= 51:
+                            priseiron = 5
+                        elif 2500 >= alliron >= 501:
+                            priseiron = 10
+                        elif 10000 >= alliron >= 2501:
+                            priseiron = 20
+                        elif 50000 >= alliron >= 10001:
+                            priseiron = 40
+                        #sql_update_diamond = f"""UPDATE users set diamond = diamond-1 WHERE login = {user_login}"""
+                        sql_update_airon = f"""UPDATE users set airon = airon+(1*{priseiron}) WHERE login = {user_login} """
+                        #sql.execute(sql_update_diamond)
+                        sql.execute(sql_update_airon)
+                        db.commit
+                    db.commit
+                    birsh()
+                else:
+                    birsh()
+    else:
+        return
+        #print(balance)
+
+
+
+
+
+
+
+
+
+
+
+
 main(False)
+
+
