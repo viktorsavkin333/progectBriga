@@ -1,4 +1,5 @@
 import sqlite3
+import hashlib
 
 global enter 
 
@@ -20,7 +21,8 @@ def login():
     global user_login, user_password
     user_login = input("Введите логин: ")
     user_password = input("Введите пароль: ")
-    sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
+    user_password = hash256(user_password)
+    sql.execute(f"SELECT login FROM users WHERE login = '{user_login}' AND password = '{user_password}'")
     if sql.fetchone() is None:
         print("Такого пользователя не существует")
         main(False)
@@ -31,7 +33,13 @@ def login():
 
 def reg():
     user_login = input("Введите логин: ")
+    sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
     user_password = input("Введите пароль: ")
+    user_password = hash256(user_password)
+    print(user_password)
+    if user_password == '' or user_login == '':
+        print('Логин или пароль не может быть пустым')
+        reg()
     diamond = 100
     airon = 0
     abc(user_login, user_password, diamond, airon)
@@ -55,7 +63,7 @@ def main(registred):
             print(help)
             enter = input("Введите команду: ")
             if enter == '/leave':
-                print()
+                main(False)
             elif enter == '/user':
                 user()
             elif enter == '/birsh':
@@ -93,16 +101,6 @@ def birsh():
     alliron1 = sql.fetchall()
     alliron = alliron1[0][0]
     proveralliron = 0
-    if alliron <= 50:
-        priseiron = 1
-    elif 500 >= alliron >= 51:
-        priseiron = 5
-    elif 2500 >= alliron >= 501:
-        priseiron = 10
-    elif 10000 >= alliron >= 2501:
-        priseiron = 20
-    elif 50000 >= alliron >= 10001:
-        priseiron = 40
     num1 = int(input('Введите что вы хотите купить от 1 до 1 (0 для выхода): '))
     if num1 == 1:
         diamondselected = f"""SELECT diamond FROM users WHERE login={user_login}"""
@@ -121,17 +119,7 @@ def birsh():
                 sql.execute(allironselected)
                 alliron1 = sql.fetchall()
                 alliron = alliron1[0][0]
-                if alliron <= 50:
-                    priseiron = 1
-                elif 500 >= alliron >= 51:
-                    priseiron = 5
-                elif 2500 >= alliron >= 501:
-                    priseiron = 10
-                elif 10000 >= alliron >= 2501:
-                    priseiron = 20
-                elif 50000 >= alliron >= 10001:
-                    priseiron = 40
-                proveralliron += priseiron
+                proveralliron += birshiron(alliron)
             if proveralliron > alliron:
                 print('В банке не хватает железа')
                 birsh()
@@ -141,45 +129,41 @@ def birsh():
                     sql.execute(allironselected)
                     alliron1 = sql.fetchall()
                     alliron = alliron1[0][0]
-                    if alliron <= 50:
-                        priseiron = 1
-                    elif 500 >= alliron >= 51:
-                        priseiron = 5
-                    elif 2500 >= alliron >= 501:
-                        priseiron = 10
-                    elif 10000 >= alliron >= 2501:
-                        priseiron = 20
-                    elif 50000 >= alliron >= 10001:
-                        priseiron = 40
-                    a += (1 * priseiron)
+                    birshiron(alliron)
+                    a += (1 * birshiron(alliron))
                 print(f'Количества железа за {kol} алмазов: {a}')
                 yesornoo = int(input('Согласны продолжитьть? (1/0)'))
                 if yesornoo == 1:
-                    for i in range(kol):
-                        allironselected = """SELECT airon FROM users WHERE login= "bank" """
-                        sql.execute(allironselected)
-                        alliron1 = sql.fetchall()
-                        alliron = alliron1[0][0]
-                        if alliron <= 50:
-                            priseiron = 1
-                        elif 500 >= alliron >= 51:
-                            priseiron = 5
-                        elif 2500 >= alliron >= 501:
-                            priseiron = 10
-                        elif 10000 >= alliron >= 2501:
-                            priseiron = 20
-                        elif 50000 >= alliron >= 10001:
-                            priseiron = 40
-                        sql_update_diamond = f"""UPDATE users set diamond = diamond-1 WHERE login = {user_login}"""
-                        sql_update_airon = f"""UPDATE users set airon = airon+(1*{priseiron}) WHERE login = {user_login} """
-                        sql_update_bankairon = f"""UPDATE users set airon = airon-(1*{priseiron}) WHERE login = "bank" """
-                        sql.execute(sql_update_diamond)
-                        sql.execute(sql_update_airon)
-                        sql.execute(sql_update_bankairon)
-                    db.commit()
-                    db.commit()
-                    db.commit()
-                    birsh()
+                    try:
+                        sql.execute('BEGIN TRANSACTION')
+                        for i in range(kol):
+                            allironselected = """SELECT airon FROM users WHERE login= "bank" """
+                            sql.execute(allironselected)
+                            alliron1 = sql.fetchall()
+                            alliron = alliron1[0][0]
+                            birshiron(alliron)
+                            sql_update_diamond = f"""UPDATE users set diamond = diamond-1 WHERE login = {user_login}"""
+                            sql_update_airon = f"""UPDATE users set airon = airon+(1*{birshiron(alliron)}) WHERE login = {user_login} """
+                            sql_update_bankairon = f"""UPDATE users set airon = airon-(1*{birshiron(alliron)}) WHERE login = "bank" """
+                            sql.execute(sql_update_diamond)
+                            sql.execute(sql_update_airon)
+                            sql.execute(sql_update_bankairon)
+                        db.commit()
+                        db.commit()
+                        db.commit()
+                        db.commit()
+                        print("Покупка завершенна")
+
+                    except:
+                        sqlite3.Error
+                        # Rollback the transaction in case of an error
+                        db.rollback()
+
+                    
+                    finally:
+                        # Close the cursor and connection
+                        birsh()
+                                
                 else:
                     birsh()
     else:
@@ -189,14 +173,28 @@ def birsh():
 
 
 
+def birshiron(alliron):
+    if alliron <= 50:
+        priseiron = 1
+    elif 500 >= alliron >= 51:
+        priseiron = 5
+    elif 2500 >= alliron >= 501:
+        priseiron = 10
+    elif 10000 >= alliron >= 2501:
+        priseiron = 20
+    elif 50000 >= alliron >= 10001:
+        priseiron = 40
+    return priseiron
 
 
 
 
 
-
-
+def hash256(text):
+    return hashlib.sha256(text.encode()).hexdigest()
 
 main(False)
 
 
+# добавить хеши 
+# проверять уникальность логинов 
