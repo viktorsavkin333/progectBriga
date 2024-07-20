@@ -4,12 +4,6 @@ from pochta import email, password
 import smtplib
 import random
 
-
-
-
-
-
-
 global enter 
 print(email)
 print(password)
