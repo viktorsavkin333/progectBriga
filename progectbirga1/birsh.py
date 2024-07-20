@@ -1,8 +1,18 @@
 import sqlite3
 import hashlib
+from pochta import email, password
+import smtplib
+import random
+
+
+
+
+
+
 
 global enter 
-
+print(email)
+print(password)
 
 global db
 global sql
@@ -13,6 +23,7 @@ sql = db.cursor()
 sql.execute("""CREATE TABLE IF NOT EXISTS users (
     login TEXT,
     password TEXT,
+    email TEXT
     diamond INTEGER,
     airon INTEGER
 )""")
@@ -40,6 +51,8 @@ def reg():
     if user_password == '' or user_login == '':
         print('Логин или пароль не может быть пустым')
         reg()
+    user_email = input("Введите вашу почту: ")
+    message(user_email)
     diamond = 100
     airon = 0
     abc(user_login, user_password, diamond, airon)
@@ -186,6 +199,23 @@ def birshiron(alliron):
         priseiron = 40
     return priseiron
 
+def message(user_email):
+    smtp_server = "smtp.gmail.com"
+    port = 587  # используйте порт 465 для SSL
+    server = smtplib.SMTP(smtp_server, port)
+    server.starttls()  # обновляем соединение с использованием TLS-шифровани
+    server.login(email, password)
+    from_email = email
+    to_email = user_email
+    a = random.randint(1000, 9999)
+    server.sendmail(from_email, to_email, f"Subject: {a}")
+
+    c = int(input('Введите число отправленное вам на почту(так-же проверьте папку спам) '))
+
+    if c == a:
+        print('OK')
+    else:
+        print('NOT OK')
 
 
 
@@ -193,8 +223,9 @@ def birshiron(alliron):
 def hash256(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
-main(False)
 
+if __name__ == "__main__":
+    main(False)
 
 # добавить хеши 
 # проверять уникальность логинов 
