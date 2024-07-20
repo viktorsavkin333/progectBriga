@@ -5,8 +5,7 @@ import smtplib
 import random
 
 global enter 
-print(email)
-print(password)
+
 
 global db
 global sql
@@ -36,20 +35,23 @@ def login():
         print("Вы успешно авторизованны")
         main(True)
 
-def reg():
-    user_login = input("Введите логин: ")
-    sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
-    user_password = input("Введите пароль: ")
-    user_password = hash256(user_password)
-    print(user_password)
-    if user_password == '' or user_login == '':
-        print('Логин или пароль не может быть пустым')
-        reg()
-    user_email = input("Введите вашу почту: ")
-    message(user_email)
-    diamond = 100
-    airon = 0
-    abc(user_login, user_password, diamond, airon)
+def reg(avtorization):
+    if avtorization == False:
+        global user_login, user_password, user_email
+        user_login = input("Введите логин: ")
+        sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
+        user_password = input("Введите пароль: ")
+        user_password = hash256(user_password)
+        print(user_password)
+        if user_password == '' or user_login == '':
+            print('Логин или пароль не может быть пустым')
+            reg()
+        user_email = input("Введите вашу почту: ")
+        message(user_email)
+    elif avtorization == True:
+        diamond = 100
+        airon = 0
+        abc(user_login, user_password, user_email, diamond, airon)
 
 def main(registred):
         if registred == False:
@@ -59,7 +61,7 @@ def main(registred):
             if enter == '/leave':
                 print()
             elif enter == '/new_user':
-                reg()
+                reg(False)
             elif enter == '/login':
                 login()
             else:
@@ -79,10 +81,10 @@ def main(registred):
                 print('Неверная команда')
                 main(True)
 
-def abc (user_login, user_password, diamond, airon):
+def abc (user_login, user_password, user_email, diamond, airon):
         sql.execute(f"SELECT login FROM users WHERE login = '{user_login}'")
         if sql.fetchone() is None:
-            sql.execute(f"INSERT INTO users VALUES (?, ?, ?, ?)", (user_login, user_password, diamond, airon))
+            sql.execute(f"INSERT INTO users VALUES (?, ?, ?, ?, ?)", (user_login, user_password, user_email, diamond, airon))
             db.commit()
             print('Вы успешно зарегестрированны')
             main(False)
@@ -198,18 +200,22 @@ def message(user_email):
     port = 587  # используйте порт 465 для SSL
     server = smtplib.SMTP(smtp_server, port)
     server.starttls()  # обновляем соединение с использованием TLS-шифровани
-    server.login(email, password)
-    from_email = email
-    to_email = user_email
-    a = random.randint(1000, 9999)
-    server.sendmail(from_email, to_email, f"Subject: {a}")
+    a = False
+    while a != True:
+        server.login(email, password)
+        from_email = email
+        to_email = user_email
+        a = random.randint(1000, 9999)
+        server.sendmail(from_email, to_email, f"Subject: {a}")
 
-    c = int(input('Введите число отправленное вам на почту(так-же проверьте папку спам) '))
+        c = int(input('Введите число отправленное вам на почту(так-же проверьте папку спам) '))
 
-    if c == a:
-        print('OK')
-    else:
-        print('NOT OK')
+        if c == a:
+            print('Вы успешно авторизовались')
+            a = True
+            reg(True)
+        else:
+            print('NOT OK')
 
 
 
