@@ -1,5 +1,6 @@
 import sqlite3
 import hashlib
+# poshta отдельный файл с паролем(приложения) и логином почты
 from pochta import email, password
 import smtplib
 import random
