@@ -191,4 +191,8 @@ def birshnezerite(alliron):
     return priseiron
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     birsh()
+=======
+    main(False)
+>>>>>>> 78dde995b1d6c35075f2b33515057b7ce205a344
