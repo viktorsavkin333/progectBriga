@@ -1,0 +1,64 @@
+body {
+    background-color: #ffffff;
+    transition: ease 500ms;
+}
+body.dark-theme {
+    background: #121212b6;
+    transition: ease 500ms;
+}
+body.light-theme {
+    background: #ffffff;
+    transition: ease 500ms;
+}
+
+img{
+    position: relative;
+    width: 50%;
+    height: 50%;
+}
+
+
+
+@media (max-width: 550px){
+    img{
+        left: 25%;
+    }
+    .text_1, .text_2{
+        position: relative;
+        text-align: center;
+    }
+    .button {
+        padding: 10px;
+        position: relative;
+        font-size: xx-large;
+        width: 100%;
+    }
+}
+
+@media (min-width: 550px){
+    img{
+        left: 0%;
+    }
+    .text_1, .text_2{
+        position: relative;
+        font-size: xx-large;
+    }
+    .button {
+        position: relative;
+        font-size: xx-large;
+    }
+    div.all {
+        flex: content;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
