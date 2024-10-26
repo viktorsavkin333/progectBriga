@@ -192,4 +192,3 @@ def birshnezerite(alliron):
 
 if __name__ == "__main__":
     birsh()
-    main(False)
